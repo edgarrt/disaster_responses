@@ -1,0 +1,9 @@
+pandas
+jupyter
+flask
+sklearn
+sqlalchemy
+numpy
+flake8
+black
+plotly
