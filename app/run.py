@@ -47,11 +47,16 @@ def tokenize(text):
 
 
 # load data
-engine = create_engine("sqlite:///../data/DisasterResponse.db")
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+db_file = os.path.join(project_root, "data", "DisasterResponse.db")
+base = "sqlite:///"
+file_to_open = base + db_file
+engine = create_engine(file_to_open)
 df = pd.read_sql_table("DisasterResponse", engine)
 
 # load model
-model = joblib.load("../models/classifier.pkl")
+model_filepath = os.path.join(project_root, "models", "classifier.pkl")
+model = joblib.load(model_filepath)
 
 
 def get_prediction_results(message):
