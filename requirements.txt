@@ -7,3 +7,4 @@ numpy
 flake8
 black
 plotly
+nltk
