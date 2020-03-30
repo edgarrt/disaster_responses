@@ -11,7 +11,7 @@ from sqlalchemy import create_engine
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
-
+import os
 nltk.download(["punkt", "wordnet", "stopwords"])
 
 
@@ -171,7 +171,8 @@ def go():
 
 
 def main():
-    app.run(host="0.0.0.0", port=80, debug=True)
+    port = int(os.environ.get("PORT", 3001))
+    app.run(host="0.0.0.0", port=port, debug=True)
 
 
 if __name__ == "__main__":
