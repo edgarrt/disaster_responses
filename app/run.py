@@ -151,7 +151,7 @@ def render_graphs():
             header=dict(values=["Input", "Classification"]),
             cells=dict(
                 values=[
-                [example_1, example_2], 
+                [example_1, example_2],
                 [str(predicted_1), str(predicted_2)]
                 ]
             ),
