@@ -3,20 +3,21 @@ import plotly
 import pandas as pd
 import nltk
 from flask import Flask
-from flask import render_template, request, jsonify
+from flask import render_template, request
 from plotly.graph_objs import Bar, Scatter, Table
-import plotly.graph_objs as go
 from sklearn.externals import joblib
 from sqlalchemy import create_engine
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 import os
+
 nltk.download(["punkt", "wordnet", "stopwords"])
 
 
 app = Flask(__name__)
 
+# No stopword removal
 # def tokenize(text):
 #     tokens = word_tokenize(text)
 #     lemmatizer = WordNetLemmatizer()
@@ -30,9 +31,18 @@ app = Flask(__name__)
 
 
 def tokenize(text):
-    stop_words = stopwords.words("english")
+    """"
 
-    #     text = re.sub(r"[^a-zA-Z0-9]", " ", text.lower())
+    Preprocesses text input string
+
+    params:
+    text: text to preprocess
+
+    returns:
+    clean_tokens: list of text input preprocessed
+
+    """
+    stop_words = stopwords.words("english")
 
     tokens = word_tokenize(text)
     lemmatizer = WordNetLemmatizer()
@@ -60,6 +70,17 @@ model = joblib.load(model_filepath)
 
 
 def get_prediction_results(message):
+    """"
+
+    Tokenizes inputted paramets and guess category classification
+
+    params:
+    mesage: message to predict
+
+    returns:
+    predicted: Array classfications predicted
+
+    """
     result = model.predict([message])[0]
     result = dict(zip(df.columns[4:], result))
     predicted = []
@@ -70,8 +91,17 @@ def get_prediction_results(message):
 
 
 def render_graphs():
-    # extract data needed for visuals
-    # TODO: Below is an example - modify to extract data for your own visuals
+    """"
+
+    Defines graphs to be rendered
+
+    params:
+    None
+
+    returns:
+    None
+
+    """
 
     genre_counts = df.groupby("genre").count()["message"]
     genre_names = list(genre_counts.index)
@@ -100,7 +130,9 @@ def render_graphs():
 
     df_counts_percentage = df_counts.apply(lambda x: x / 26180)
     graph_three = []
-    graph_three.append(Scatter(x=categories, y=df_counts_percentage, mode="markers"))
+    graph_three.append(
+            Scatter(x=categories, y=df_counts_percentage, mode="markers")
+        )
     layout_three = {
         "title": "Category Occurance Percentage in Dataset",
         "yaxis": {"title": "Occurance percentage in rows"},
@@ -118,29 +150,20 @@ def render_graphs():
         Table(
             header=dict(values=["Input", "Classification"]),
             cells=dict(
-                values=[[example_1, example_2], [str(predicted_1), str(predicted_2)]]
+                values=[
+                [example_1, example_2], 
+                [str(predicted_1), str(predicted_2)]
+                ]
             ),
         )
     )
     layout_four = {"title": "Category Occurance Percentage in Dataset", "height": 275}
-
-    #     graph_five = []
-    #     graph_five.append(
-    #                   Table(header=dict(values=df.columns),
-    #                         cells=dict(values=df.loc[0,:]
-    #                                   )
-    #                        )
-    #     )
-    #     layout_five =  {
-    #         'title': 'Category Occurance Percentage in Dataset',
-    #     }
 
     figures = []
     figures.append(dict(data=graph_one, layout=layout_one))
     figures.append(dict(data=graph_two, layout=layout_two))
     figures.append(dict(data=graph_three, layout=layout_three))
     figures.append(dict(data=graph_four, layout=layout_four))
-    #     figures.append(dict(data=graph_five, layout=layout_five))
 
     return figures
 
@@ -149,6 +172,17 @@ def render_graphs():
 @app.route("/")
 @app.route("/index")
 def index():
+    """"
+
+    Routes intial endpoints
+
+    params:
+    None
+
+    returns:
+    None
+
+    """
     # render custom graphs created
     graphs = render_graphs()
     # encode plotly graphs in JSON
@@ -162,6 +196,17 @@ def index():
 # web page that handles user query and displays model results
 @app.route("/go")
 def go():
+    """"
+
+    Routes query endpoint for user inputted message string
+
+    params:
+    query: message to guess
+
+    returns:
+    None
+
+    """
     # save user input in query
     query = request.args.get("query", "")
 
