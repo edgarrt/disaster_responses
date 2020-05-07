@@ -1,6 +1,9 @@
 # Disaster Response Pipeline Project
 
-### Instructions:
+### View it live
+https://gentle-retreat-29205.herokuapp.com/
+
+### Instructions to run locally:
 1. Run the following commands in the project's root directory to set up your database and model.
 
     - To run ETL pipeline that cleans data and stores in database
